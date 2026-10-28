@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Device Settings</h1>
+    </header>
+
+    <nav>
+      <a href="index.html">Overview</a>
+      <a href="devices.html">Devices</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+
+    <main>
+      <form id="settingsForm">
+        <label>
+          Temperature Threshold
+          <input type="number" name="threshold_temperature" value="35" />
+        </label>
+        <label>
+          Vibration Threshold
+          <input type="number" name="threshold_vibration" value="12" />
+        </label>
+        <label>
+          Pressure Threshold
+          <input type="number" name="threshold_pressure" value="25" />
+        </label>
+        <button type="submit">Save Settings</button>
+      </form>
+    </main>
+
+    <script src="js/settings.js"></script>
+  </body>
+</html>
