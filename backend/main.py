@@ -27,4 +27,18 @@ app.include_router(settings_router)
 
 @app.get("/")
 def root():
-    return {"message": "Smart Stick IoT API is running"}
+    return {
+        "message": "Smart Stick IoT API is running",
+        "status": "ok",
+    }
+
+
+@app.get("/dashboard")
+def dashboard_summary():
+    return {
+        "total_devices": 0,
+        "online_devices": 0,
+        "offline_devices": 0,
+        "latest_alert": None,
+        "latest_distance": None,
+    }

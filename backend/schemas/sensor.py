@@ -1,14 +1,13 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SensorEventBase(BaseModel):
     device_id: int
-    temperature: Optional[float] = 0.0
-    vibration: Optional[float] = 0.0
-    pressure: Optional[float] = 0.0
-    moisture: Optional[float] = 0.0
+    distance_cm: Optional[float] = 0.0
+    status: Optional[str] = "clear"
+    event_type: Optional[str] = "obstacle_scan"
 
 
 class SensorEventCreate(SensorEventBase):
@@ -17,6 +16,4 @@ class SensorEventCreate(SensorEventBase):
 
 class SensorEventRead(SensorEventBase):
     id: int
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

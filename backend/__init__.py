@@ -1,1 +1,1 @@
-# Package marker for backend module
+# Package marker

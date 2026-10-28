@@ -1,20 +1,20 @@
 async function loadAlerts() {
-  const alertsList = document.getElementById("alertsList");
+  const list = document.getElementById("alertsList");
 
   try {
     const response = await fetch("http://127.0.0.1:8000/emergencies/");
     const alerts = await response.json();
 
     if (!alerts.length) {
-      alertsList.innerHTML = "<li>No alerts</li>";
+      list.innerHTML = "<li>No emergency alerts recorded.</li>";
       return;
     }
 
-    alertsList.innerHTML = alerts
+    list.innerHTML = alerts
       .map(
         (alert) => `
           <li>
-            <strong>${alert.type}</strong> - ${alert.severity} - ${alert.status}
+            <strong>${alert.emergency_type}</strong> • ${alert.severity} • ${alert.notification_status}
           </li>
         `
       )

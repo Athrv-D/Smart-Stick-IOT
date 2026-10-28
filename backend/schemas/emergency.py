@@ -1,14 +1,15 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class EmergencyBase(BaseModel):
     device_id: int
-    type: str
+    emergency_type: str
     severity: Optional[str] = "medium"
     description: Optional[str] = ""
-    status: Optional[str] = "open"
+    notification_status: Optional[str] = "pending"
+    resolved: Optional[bool] = False
 
 
 class EmergencyCreate(EmergencyBase):
@@ -17,6 +18,4 @@ class EmergencyCreate(EmergencyBase):
 
 class EmergencyRead(EmergencyBase):
     id: int
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

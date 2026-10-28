@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from backend.database import Base
@@ -9,9 +9,10 @@ class DeviceSettings(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     device_id = Column(Integer, ForeignKey("devices.id"), nullable=False, unique=True)
-    threshold_temperature = Column(Float, default=35.0)
-    threshold_vibration = Column(Float, default=12.0)
-    threshold_pressure = Column(Float, default=25.0)
-    alert_mode = Column(String, default="sms")
+    obstacle_threshold = Column(Float, default=80.0)
+    buzzer_enabled = Column(Boolean, default=True)
+    vibration_enabled = Column(Boolean, default=True)
+    emergency_contact_number = Column(String, default="+1234567890")
+    notification_preferences = Column(String, default="sms")
 
     device = relationship("Device")

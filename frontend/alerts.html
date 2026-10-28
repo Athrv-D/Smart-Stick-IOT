@@ -3,23 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alerts</title>
+    <title>Smart Stick Alerts</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
-      <h1>Alerts</h1>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Smart Stick</p>
+        <h1>Emergency Alerts</h1>
+      </div>
     </header>
 
-    <nav>
+    <nav class="main-nav">
       <a href="index.html">Overview</a>
       <a href="devices.html">Devices</a>
-      <a href="alerts.html">Alerts</a>
+      <a href="alerts.html" class="active">Alerts</a>
       <a href="settings.html">Settings</a>
     </nav>
 
-    <main>
-      <ul id="alertsList"></ul>
+    <main class="content-page">
+      <ul id="alertsList" class="list large-list"></ul>
     </main>
 
     <script src="js/alerts.js"></script>

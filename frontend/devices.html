@@ -3,23 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Devices</title>
+    <title>Smart Stick Devices</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
-      <h1>Devices</h1>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Smart Stick</p>
+        <h1>Device Management</h1>
+      </div>
     </header>
 
-    <nav>
+    <nav class="main-nav">
       <a href="index.html">Overview</a>
-      <a href="devices.html">Devices</a>
+      <a href="devices.html" class="active">Devices</a>
       <a href="alerts.html">Alerts</a>
       <a href="settings.html">Settings</a>
     </nav>
 
-    <main>
-      <table id="deviceTable">
+    <main class="content-page">
+      <table class="data-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -29,7 +32,7 @@
             <th>Location</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="deviceTableBody"></tbody>
       </table>
     </main>
 

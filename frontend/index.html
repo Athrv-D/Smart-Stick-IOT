@@ -7,29 +7,50 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
-      <h1>Smart Stick Dashboard</h1>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Smart Stick</p>
+        <h1>Caregiver Dashboard</h1>
+      </div>
     </header>
 
-    <nav>
-      <a href="index.html">Overview</a>
+    <nav class="main-nav">
+      <a href="index.html" class="active">Overview</a>
       <a href="devices.html">Devices</a>
       <a href="alerts.html">Alerts</a>
       <a href="settings.html">Settings</a>
     </nav>
 
     <main class="dashboard">
-      <section class="card">
-        <h3>Online Devices</h3>
-        <p id="onlineDevices">0</p>
+      <section class="stats-grid">
+        <div class="card metric">
+          <span class="label">Total devices</span>
+          <strong id="totalDevices">0</strong>
+        </div>
+        <div class="card metric">
+          <span class="label">Online</span>
+          <strong id="onlineDevices">0</strong>
+        </div>
+        <div class="card metric">
+          <span class="label">Offline</span>
+          <strong id="offlineDevices">0</strong>
+        </div>
+        <div class="card metric">
+          <span class="label">Battery</span>
+          <strong id="batteryHealth">0%</strong>
+        </div>
       </section>
-      <section class="card">
-        <h3>Open Alerts</h3>
-        <p id="openAlerts">0</p>
-      </section>
-      <section class="card">
-        <h3>Battery Health</h3>
-        <p id="batteryHealth">0%</p>
+
+      <section class="panel-grid">
+        <div class="card">
+          <h2>Recent obstacle events</h2>
+          <ul id="recentEvents" class="list"></ul>
+        </div>
+
+        <div class="card">
+          <h2>Recent emergency alerts</h2>
+          <ul id="recentAlerts" class="list"></ul>
+        </div>
       </section>
     </main>
 

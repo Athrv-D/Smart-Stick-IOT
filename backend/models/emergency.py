@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -10,10 +10,11 @@ class Emergency(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     device_id = Column(Integer, ForeignKey("devices.id"), nullable=False)
-    type = Column(String, nullable=False)
+    emergency_type = Column(String, nullable=False)
     severity = Column(String, default="medium")
     description = Column(String, default="")
-    status = Column(String, default="open")
+    notification_status = Column(String, default="pending")
+    resolved = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     device = relationship("Device")

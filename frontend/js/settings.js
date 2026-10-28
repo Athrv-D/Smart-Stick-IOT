@@ -3,10 +3,11 @@ document.getElementById("settingsForm").addEventListener("submit", async (event)
 
   const form = event.target;
   const payload = {
-    threshold_temperature: Number(form.threshold_temperature.value),
-    threshold_vibration: Number(form.threshold_vibration.value),
-    threshold_pressure: Number(form.threshold_pressure.value),
-    alert_mode: "sms",
+    obstacle_threshold: Number(form.obstacle_threshold.value),
+    buzzer_enabled: form.buzzer_enabled.checked,
+    vibration_enabled: form.vibration_enabled.checked,
+    emergency_contact_number: form.emergency_contact_number.value,
+    notification_preferences: form.notification_preferences.value,
   };
 
   try {
@@ -20,7 +21,7 @@ document.getElementById("settingsForm").addEventListener("submit", async (event)
 
     const result = await response.json();
     console.log("Settings saved:", result);
-    alert("Settings updated successfully");
+    alert("Settings saved successfully.");
   } catch (error) {
     console.error("Failed to save settings", error);
   }

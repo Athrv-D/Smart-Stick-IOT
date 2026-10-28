@@ -3,34 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Settings</title>
+    <title>Smart Stick Settings</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
-      <h1>Device Settings</h1>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Smart Stick</p>
+        <h1>Device Settings</h1>
+      </div>
     </header>
 
-    <nav>
+    <nav class="main-nav">
       <a href="index.html">Overview</a>
       <a href="devices.html">Devices</a>
       <a href="alerts.html">Alerts</a>
-      <a href="settings.html">Settings</a>
+      <a href="settings.html" class="active">Settings</a>
     </nav>
 
-    <main>
-      <form id="settingsForm">
+    <main class="content-page">
+      <form id="settingsForm" class="settings-form">
         <label>
-          Temperature Threshold
-          <input type="number" name="threshold_temperature" value="35" />
+          Obstacle Threshold (cm)
+          <input type="number" name="obstacle_threshold" value="80" />
         </label>
         <label>
-          Vibration Threshold
-          <input type="number" name="threshold_vibration" value="12" />
+          Buzzer Enabled
+          <input type="checkbox" name="buzzer_enabled" checked />
         </label>
         <label>
-          Pressure Threshold
-          <input type="number" name="threshold_pressure" value="25" />
+          Vibration Enabled
+          <input type="checkbox" name="vibration_enabled" checked />
+        </label>
+        <label>
+          Emergency Contact
+          <input type="tel" name="emergency_contact_number" value="+1234567890" />
+        </label>
+        <label>
+          Notification Preferences
+          <select name="notification_preferences">
+            <option value="sms">SMS</option>
+            <option value="app">App</option>
+            <option value="both">SMS + App</option>
+          </select>
         </label>
         <button type="submit">Save Settings</button>
       </form>

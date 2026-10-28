@@ -1,11 +1,11 @@
 async function loadDevices() {
-  const tableBody = document.querySelector("#deviceTable tbody");
+  const body = document.getElementById("deviceTableBody");
 
   try {
     const response = await fetch("http://127.0.0.1:8000/devices/");
     const devices = await response.json();
 
-    tableBody.innerHTML = devices
+    body.innerHTML = devices
       .map(
         (device) => `
           <tr>
