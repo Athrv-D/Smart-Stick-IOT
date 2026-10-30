@@ -124,6 +124,45 @@ void postSensorReading(float distance, int waterRaw, bool waterDetected, bool ob
   postJson("/sensor/data", doc);
 }
 
+#if ENABLE_SIM800L
+bool waitForGsm(const char* expected, unsigned long timeoutMs) {
+  String received;
+  unsigned long started = millis();
+  while (millis() - started < timeoutMs) {
+    while (gsm.available()) {
+      char c = static_cast<char>(gsm.read());
+      received += c;
+      if (received.indexOf(expected) >= 0) return true;
+    }
+    delay(10);
+  }
+  return false;
+}
+
+bool sendSms(const String& phone, const String& message) {
+  if (phone.length() < 8) return false;
+  while (gsm.available()) gsm.read();
+  gsm.println("AT");
+  if (!waitForGsm("OK", 2000)) return false;
+  gsm.println("AT+CMGF=1");
+  if (!waitForGsm("OK", 2000)) return false;
+  gsm.print("AT+CMGS=\"");
+  gsm.print(phone);
+  gsm.println("\"");
+  if (!waitForGsm(">", 5000)) return false;
+  gsm.print(message);
+  gsm.write(26); // Ctrl+Z submits the SMS
+  return waitForGsm("+CMGS:", 20000) && waitForGsm("OK", 5000);
+}
+
+void reportSmsDelivery(int emergencyId, bool sent) {
+  if (emergencyId <= 0 || WiFi.status() != WL_CONNECTED) return;
+  JsonDocument statusDoc;
+  statusDoc["status"] = sent ? "sent" : "failed";
+  postJson(String("/emergencies/") + emergencyId + "/delivery", statusDoc);
+}
+#endif
+
 void sendEmergency(const char* type, const char* description) {
   JsonDocument doc;
   doc["device_code"] = DEVICE_CODE;
@@ -135,15 +174,28 @@ void sendEmergency(const char* type, const char* description) {
 
 #if ENABLE_SIM800L
   JsonDocument result;
-  if (deserializeJson(result, response) == DeserializationError::Ok) {
-    int emergencyId = result["id"] | 0;
-    String phone = result["emergency_contact_number"] | "";
-    // The API currently does not return the contact number in emergency responses.
-    // Fetch settings and read the number before sending; implement after SIM power/pins
-    // and the actual recipient number are verified. Never hard-code a personal number.
-    (void)emergencyId;
-    (void)phone;
+  if (deserializeJson(result, response) != DeserializationError::Ok) return;
+  int emergencyId = result["id"] | 0;
+
+  // Retrieve the caregiver's configured number; never hard-code a recipient.
+  HTTPClient settingsHttp;
+  if (!settingsHttp.begin(wifiClient, String(API_BASE) + "/settings/")) {
+    reportSmsDelivery(emergencyId, false);
+    return;
   }
+  int settingsCode = settingsHttp.GET();
+  String phone;
+  if (settingsCode == 200) {
+    JsonDocument settingsDoc;
+    if (deserializeJson(settingsDoc, settingsHttp.getString()) == DeserializationError::Ok) {
+      phone = settingsDoc["emergency_contact_number"] | "";
+    }
+  }
+  settingsHttp.end();
+
+  String smsText = String("SMART STICK EMERGENCY: ") + type + ". " + description;
+  bool sent = settingsCode == 200 && sendSms(phone, smsText);
+  reportSmsDelivery(emergencyId, sent);
 #endif
 }
 
