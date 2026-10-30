@@ -14,6 +14,13 @@ class DeviceCreate(BaseModel):
     is_active: bool = True
 
 
+class DeviceHeartbeat(BaseModel):
+    device_code: str = Field(min_length=1, max_length=100)
+    battery_level: float | None = Field(default=None, ge=0, le=100)
+    connection_type: Literal["wifi", "cellular"] = "wifi"
+    firmware_version: str | None = Field(default=None, max_length=40)
+
+
 class DeviceRead(DeviceCreate):
     id: int
     last_seen: datetime | None = None

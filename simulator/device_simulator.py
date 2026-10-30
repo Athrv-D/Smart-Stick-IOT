@@ -4,33 +4,47 @@ import time
 import requests
 
 BASE_URL = "http://127.0.0.1:8000"
-DEVICE_ID = "STICK_001"
-device_pk = None
+DEVICE_CODE = "STICK_001"
 
 
 def register_device():
-    global device_pk
     payload = {
-        "device_id": DEVICE_ID,
+        "device_id": DEVICE_CODE,
         "name": "Smart Stick 001",
         "status": "online",
         "connection_type": "wifi",
         "battery_level": 96.5,
-        "location": "Home",
+        "location": "Unknown",
         "is_active": True,
     }
     response = requests.post(f"{BASE_URL}/devices/", json=payload, timeout=10)
     response.raise_for_status()
-    device_pk = response.json()["id"]
-    print(f"Connected simulator to {DEVICE_ID} (database id: {device_pk})")
+    print(f"Registered simulator for {DEVICE_CODE}")
+
+
+def send_heartbeat():
+    response = requests.post(
+        f"{BASE_URL}/devices/heartbeat",
+        json={"device_code": DEVICE_CODE, "connection_type": "wifi", "battery_level": 96.5},
+        timeout=10,
+    )
+    response.raise_for_status()
 
 
 def send_sensor_data():
+    distance = round(random.uniform(20, 180), 2)
+    water_value = random.randint(100, 900)
+    water_detected = water_value < 350
+    status = "water_detected" if water_detected else (
+        "obstacle_detected" if distance < 80 else "clear"
+    )
     payload = {
-        "device_id": device_pk,
-        "distance_cm": round(random.uniform(30, 180), 2),
-        "status": "obstacle_detected" if random.random() < 0.35 else "clear",
-        "event_type": "obstacle_scan",
+        "device_code": DEVICE_CODE,
+        "distance_cm": distance,
+        "water_detected": water_detected,
+        "water_value": water_value,
+        "status": status,
+        "event_type": "sensor_scan",
         "battery_level": round(random.uniform(75, 100), 1),
     }
     response = requests.post(f"{BASE_URL}/sensor/data", json=payload, timeout=10)
@@ -40,10 +54,10 @@ def send_sensor_data():
 
 def trigger_emergency():
     payload = {
-        "device_id": device_pk,
+        "device_code": DEVICE_CODE,
         "emergency_type": "manual_button",
         "severity": "high",
-        "description": "Emergency button pressed by user",
+        "description": "Emergency button pressed by user (simulator)",
     }
     response = requests.post(f"{BASE_URL}/emergencies/", json=payload, timeout=10)
     response.raise_for_status()
@@ -52,8 +66,12 @@ def trigger_emergency():
 
 if __name__ == "__main__":
     register_device()
+    last_heartbeat = 0
     while True:
         send_sensor_data()
+        if time.monotonic() - last_heartbeat >= 30:
+            send_heartbeat()
+            last_heartbeat = time.monotonic()
         if random.random() < 0.08:
             trigger_emergency()
         time.sleep(5)

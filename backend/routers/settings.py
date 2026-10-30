@@ -14,6 +14,7 @@ CONFIGURED_DEVICE_ID = os.getenv("SMART_STICK_DEVICE_ID", "STICK_001")
 
 class SettingsUpdate(BaseModel):
     obstacle_threshold: float = Field(default=80, gt=0, le=500)
+    water_threshold: int = Field(default=500, ge=0, le=4095)
     buzzer_enabled: bool = True
     vibration_enabled: bool = True
     emergency_contact_number: str = Field(default="", max_length=20)
@@ -21,19 +22,15 @@ class SettingsUpdate(BaseModel):
 
 
 def _get_device(db: Session):
-    device = (
-        db.query(Device)
-        .filter(Device.device_id == CONFIGURED_DEVICE_ID, Device.is_active.is_(True))
-        .first()
-    )
+    device = db.query(Device).filter(
+        Device.device_id == CONFIGURED_DEVICE_ID, Device.is_active.is_(True)
+    ).first()
     if not device:
         raise HTTPException(status_code=404, detail="Smart Stick is not registered")
     return device
 
 
-@router.get("/")
-def get_settings(db: Session = Depends(get_db)):
-    device = _get_device(db)
+def _get_or_create_settings(db: Session, device: Device):
     settings = db.query(DeviceSettings).filter(DeviceSettings.device_id == device.id).first()
     if not settings:
         settings = DeviceSettings(device_id=device.id)
@@ -43,17 +40,16 @@ def get_settings(db: Session = Depends(get_db)):
     return settings
 
 
+@router.get("/")
+def get_settings(db: Session = Depends(get_db)):
+    return _get_or_create_settings(db, _get_device(db))
+
+
 @router.put("/")
 def update_settings(payload: SettingsUpdate, db: Session = Depends(get_db)):
-    device = _get_device(db)
-    settings = db.query(DeviceSettings).filter(DeviceSettings.device_id == device.id).first()
-    if not settings:
-        settings = DeviceSettings(device_id=device.id)
-        db.add(settings)
-
+    settings = _get_or_create_settings(db, _get_device(db))
     for key, value in payload.model_dump().items():
         setattr(settings, key, value)
-
     db.commit()
     db.refresh(settings)
     return settings
