@@ -11,6 +11,10 @@ def create_sensor_event(db: Session, event_data: dict):
     if not device:
         raise ValueError("Device not found")
 
+    battery_level = event_data.pop("battery_level", None)
+    if battery_level is not None:
+        device.battery_level = battery_level
+
     event = SensorEvent(**event_data)
     device.last_seen = datetime.now(timezone.utc)
     device.status = "online"
