@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
 from backend.database import Base, engine, get_db
@@ -12,6 +13,31 @@ from backend.routers.emergencies import router as emergencies_router
 from backend.routers.sensor_data import router as sensor_router
 from backend.routers.settings import router as settings_router
 
+# Additive SQLite migration: preserve existing records and add only new nullable/defaulted fields.
+def migrate_sqlite_schema():
+    if engine.dialect.name != "sqlite":
+        return
+    inspector = inspect(engine)
+    with engine.begin() as connection:
+        if "sensor_events" in inspector.get_table_names():
+            columns = {column["name"] for column in inspector.get_columns("sensor_events")}
+            if "water_detected" not in columns:
+                connection.execute(text(
+                    "ALTER TABLE sensor_events ADD COLUMN water_detected BOOLEAN NOT NULL DEFAULT 0"
+                ))
+            if "water_value" not in columns:
+                connection.execute(text(
+                    "ALTER TABLE sensor_events ADD COLUMN water_value INTEGER"
+                ))
+        if "device_settings" in inspector.get_table_names():
+            columns = {column["name"] for column in inspector.get_columns("device_settings")}
+            if "water_threshold" not in columns:
+                connection.execute(text(
+                    "ALTER TABLE device_settings ADD COLUMN water_threshold INTEGER NOT NULL DEFAULT 500"
+                ))
+
+
+migrate_sqlite_schema()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Smart Stick Caregiver API")
@@ -36,7 +62,6 @@ def root():
 
 @app.get("/dashboard")
 def dashboard_summary(db: Session = Depends(get_db)):
-    """Return status and recent activity for the configured single stick."""
     configured_id = os.getenv("SMART_STICK_DEVICE_ID", "STICK_001")
     device = (
         db.query(Device)
@@ -51,6 +76,7 @@ def dashboard_summary(db: Session = Depends(get_db)):
             "latest_sensor": None,
             "sensor_events": [],
             "emergencies": [],
+            "settings": None,
             "message": "Register the Smart Stick to begin monitoring.",
         }
 
