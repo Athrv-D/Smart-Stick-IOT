@@ -1,41 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Stick Devices</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">Smart Stick</p>
-        <h1>Device Management</h1>
-      </div>
-    </header>
-
-    <nav class="main-nav">
-      <a href="index.html">Overview</a>
-      <a href="devices.html" class="active">Devices</a>
-      <a href="alerts.html">Alerts</a>
-      <a href="settings.html">Settings</a>
-    </nav>
-
-    <main class="content-page">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Battery</th>
-            <th>Location</th>
-          </tr>
-        </thead>
-        <tbody id="deviceTableBody"></tbody>
-      </table>
-    </main>
-
-    <script src="js/devices.js"></script>
-  </body>
-</html>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Smart Stick | Device Status</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+<header class="page-header"><div class="header-inner"><div><p class="eyebrow">SMART STICK · DEVICE</p><h1>Stick status</h1><p class="subheading">Connection and latest sensor information</p></div><span id="statusBadge" class="status-badge status-unknown">Loading…</span></div></header>
+<nav class="main-nav"><a href="index.html">Overview</a><a class="active" href="devices.html">Stick status</a><a href="alerts.html">Emergency history</a><a href="settings.html">Settings</a></nav>
+<main class="content-page">
+<section class="card device-summary"><p class="eyebrow">REGISTERED DEVICE</p><h2 id="stickName">Smart Stick</h2><p id="stickId" class="muted">Device ID: —</p><div class="detail-grid"><div><span class="label">Connection type</span><strong id="connectionType">—</strong></div><div><span class="label">Battery</span><strong id="battery">—</strong></div><div><span class="label">Location</span><strong id="location">—</strong></div><div><span class="label">Last seen</span><strong id="lastSeen">—</strong></div><div><span class="label">Latest distance</span><strong id="distance">—</strong></div><div><span class="label">Sensor status</span><strong id="sensorStatus">—</strong></div></div></section>
+<section class="card"><h2>Recent sensor readings</h2><ul id="sensorHistory" class="list"><li class="empty-state">Loading…</li></ul></section><p id="deviceError" class="error-message" role="status"></p>
+</main><script src="js/devices.js"></script></body></html>
