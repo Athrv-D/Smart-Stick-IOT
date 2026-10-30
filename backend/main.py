@@ -1,6 +1,7 @@
-from datetime import timezone
+import os
+from datetime import datetime, timedelta, timezone
 
-from fastapi import FastAPI, Depends
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -35,17 +36,17 @@ def root():
 
 @app.get("/dashboard")
 def dashboard_summary(db: Session = Depends(get_db)):
-    """Return the status and recent activity for the one configured stick."""
-    device_id = __import__("os").getenv("SMART_STICK_DEVICE_ID", "STICK_001")
+    """Return status and recent activity for the configured single stick."""
+    configured_id = os.getenv("SMART_STICK_DEVICE_ID", "STICK_001")
     device = (
         db.query(Device)
-        .filter(Device.device_id == device_id, Device.is_active.is_(True))
+        .filter(Device.device_id == configured_id, Device.is_active.is_(True))
         .first()
     )
 
     if not device:
         return {
-            "configured_device_id": device_id,
+            "configured_device_id": configured_id,
             "device": None,
             "latest_sensor": None,
             "sensor_events": [],
@@ -61,7 +62,6 @@ def dashboard_summary(db: Session = Depends(get_db)):
             if last_seen.tzinfo is None
             else last_seen
         )
-        from datetime import datetime, timedelta
         is_online = datetime.now(timezone.utc) - comparable_last_seen <= timedelta(minutes=2)
 
     latest_sensor = (
@@ -91,7 +91,7 @@ def dashboard_summary(db: Session = Depends(get_db)):
     )
 
     return {
-        "configured_device_id": device_id,
+        "configured_device_id": configured_id,
         "device": {
             "id": device.id,
             "device_id": device.device_id,
