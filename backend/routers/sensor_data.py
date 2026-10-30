@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -31,7 +33,7 @@ def get_sensor_history(device_id: int, limit: int = 20, db: Session = Depends(ge
 def get_current_sensor_history(limit: int = 20, db: Session = Depends(get_db)):
     if limit < 1 or limit > 100:
         raise HTTPException(status_code=422, detail="limit must be between 1 and 100")
-    device = db.query(Device).filter(Device.device_id == "STICK_001").first()
+    device = db.query(Device).filter(Device.device_id == os.getenv("SMART_STICK_DEVICE_ID", "STICK_001")).first()
     if not device:
         return []
     return db.query(SensorEvent).filter(
