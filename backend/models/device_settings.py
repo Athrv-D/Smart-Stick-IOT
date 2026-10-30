@@ -12,7 +12,7 @@ class DeviceSettings(Base):
     obstacle_threshold = Column(Float, default=80.0)
     buzzer_enabled = Column(Boolean, default=True)
     vibration_enabled = Column(Boolean, default=True)
-    emergency_contact_number = Column(String, default="+1234567890")
+    emergency_contact_number = Column(String, default="")
     notification_preferences = Column(String, default="sms")
 
     device = relationship("Device")
