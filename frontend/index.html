@@ -1,59 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Stick Dashboard</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">Smart Stick</p>
-        <h1>Caregiver Dashboard</h1>
-      </div>
-    </header>
-
-    <nav class="main-nav">
-      <a href="index.html" class="active">Overview</a>
-      <a href="devices.html">Devices</a>
-      <a href="alerts.html">Alerts</a>
-      <a href="settings.html">Settings</a>
-    </nav>
-
-    <main class="dashboard">
-      <section class="stats-grid">
-        <div class="card metric">
-          <span class="label">Total devices</span>
-          <strong id="totalDevices">0</strong>
-        </div>
-        <div class="card metric">
-          <span class="label">Online</span>
-          <strong id="onlineDevices">0</strong>
-        </div>
-        <div class="card metric">
-          <span class="label">Offline</span>
-          <strong id="offlineDevices">0</strong>
-        </div>
-        <div class="card metric">
-          <span class="label">Battery</span>
-          <strong id="batteryHealth">0%</strong>
-        </div>
-      </section>
-
-      <section class="panel-grid">
-        <div class="card">
-          <h2>Recent obstacle events</h2>
-          <ul id="recentEvents" class="list"></ul>
-        </div>
-
-        <div class="card">
-          <h2>Recent emergency alerts</h2>
-          <ul id="recentAlerts" class="list"></ul>
-        </div>
-      </section>
-    </main>
-
-    <script src="js/dashboard.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Stick | Caregiver Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="page-header">
+    <div class="header-inner">
+      <div><p class="eyebrow">SMART STICK · CAREGIVER PORTAL</p><h1>Care dashboard</h1><p class="subheading">Live safety and device overview</p></div>
+      <span id="connectionBadge" class="status-badge status-unknown">Connecting…</span>
+    </div>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html" class="active">Overview</a>
+    <a href="devices.html">Stick status</a>
+    <a href="alerts.html">Emergency history</a>
+    <a href="settings.html">Settings</a>
+  </nav>
+  <main class="dashboard">
+    <section class="welcome-row"><div><p class="eyebrow">YOUR DEVICE</p><h2 id="deviceName">Smart Stick</h2><p id="deviceMeta" class="muted">Waiting for device data</p></div><p id="lastSeen" class="muted">Last communication: —</p></section>
+    <section class="stats-grid">
+      <article class="card metric"><span class="label">Connection</span><strong id="connectionValue">—</strong><span id="connectionHint" class="muted">Device heartbeat</span></article>
+      <article class="card metric"><span class="label">Battery level</span><strong id="batteryValue">—</strong><span class="muted">Reported by device</span></article>
+      <article class="card metric"><span class="label">Obstacle distance</span><strong id="distanceValue">—</strong><span id="obstacleHint" class="muted">Latest ultrasonic reading</span></article>
+      <article class="card metric"><span class="label">Open emergencies</span><strong id="openAlertsValue">0</strong><span class="muted">Awaiting caregiver review</span></article>
+    </section>
+    <section class="panel-grid">
+      <article class="card"><div class="section-heading"><div><p class="eyebrow">SENSOR ACTIVITY</p><h2>Recent readings</h2></div><a href="devices.html">View status</a></div><ul id="recentEvents" class="list"><li class="empty-state">Loading readings…</li></ul></article>
+      <article class="card"><div class="section-heading"><div><p class="eyebrow">SAFETY</p><h2>Recent emergencies</h2></div><a href="alerts.html">View history</a></div><ul id="recentAlerts" class="list"><li class="empty-state">Loading alerts…</li></ul></article>
+    </section>
+    <p id="dashboardError" class="error-message" role="status"></p>
+  </main>
+  <script src="js/dashboard.js"></script>
+</body>
 </html>

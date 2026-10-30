@@ -1,19 +1,19 @@
 import os
 
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from dotenv import load_dotenv
-
 load_dotenv()
 
-USE_SQLITE = os.getenv("USE_SQLITE", "false").lower() == "true"
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./smart_stick.db" if USE_SQLITE else "postgresql://smartstick:smartstick@localhost:5432/smartstick_db",
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./smart_stick.db")
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args=connect_args,
+    pool_pre_ping=True,
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

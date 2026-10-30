@@ -4,7 +4,13 @@ from backend.models.device import Device
 
 
 def get_all_devices(db: Session):
-    return db.query(Device).all()
+    return (
+        db.query(Device)
+        .filter(Device.is_active.is_(True))
+        .order_by(Device.id.asc())
+        .limit(1)
+        .all()
+    )
 
 
 def create_device(db: Session, device_data: dict):

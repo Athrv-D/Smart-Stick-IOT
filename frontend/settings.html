@@ -1,56 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Stick Settings</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">Smart Stick</p>
-        <h1>Device Settings</h1>
-      </div>
-    </header>
-
-    <nav class="main-nav">
-      <a href="index.html">Overview</a>
-      <a href="devices.html">Devices</a>
-      <a href="alerts.html">Alerts</a>
-      <a href="settings.html" class="active">Settings</a>
-    </nav>
-
-    <main class="content-page">
-      <form id="settingsForm" class="settings-form">
-        <label>
-          Obstacle Threshold (cm)
-          <input type="number" name="obstacle_threshold" value="80" />
-        </label>
-        <label>
-          Buzzer Enabled
-          <input type="checkbox" name="buzzer_enabled" checked />
-        </label>
-        <label>
-          Vibration Enabled
-          <input type="checkbox" name="vibration_enabled" checked />
-        </label>
-        <label>
-          Emergency Contact
-          <input type="tel" name="emergency_contact_number" value="+1234567890" />
-        </label>
-        <label>
-          Notification Preferences
-          <select name="notification_preferences">
-            <option value="sms">SMS</option>
-            <option value="app">App</option>
-            <option value="both">SMS + App</option>
-          </select>
-        </label>
-        <button type="submit">Save Settings</button>
-      </form>
-    </main>
-
-    <script src="js/settings.js"></script>
-  </body>
-</html>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Smart Stick | Settings</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+<header class="page-header"><div class="header-inner"><div><p class="eyebrow">SMART STICK · CONFIGURATION</p><h1>Device settings</h1><p class="subheading">Configure alerts and local feedback</p></div></div></header>
+<nav class="main-nav"><a href="index.html">Overview</a><a href="devices.html">Stick status</a><a href="alerts.html">Emergency history</a><a class="active" href="settings.html">Settings</a></nav>
+<main class="content-page"><section class="card settings-card"><form id="settingsForm" class="settings-form">
+<label>Obstacle alert distance (cm)<input type="number" name="obstacle_threshold" min="1" max="500" required /></label>
+<label class="toggle-row"><span>Buzzer enabled</span><input type="checkbox" name="buzzer_enabled" /></label>
+<label class="toggle-row"><span>Vibration enabled</span><input type="checkbox" name="vibration_enabled" /></label>
+<label>Emergency contact number<input type="tel" name="emergency_contact_number" placeholder="Enter caregiver phone number" /></label>
+<label>Notification preference<select name="notification_preferences"><option value="sms">SMS</option><option value="app">In-app</option><option value="both">SMS + In-app</option></select></label>
+<button type="submit">Save settings</button><p id="settingsMessage" class="form-message" role="status"></p>
+</form></section></main><script src="js/settings.js"></script></body></html>
