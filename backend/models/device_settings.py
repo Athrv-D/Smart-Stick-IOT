@@ -10,6 +10,7 @@ class DeviceSettings(Base):
     id = Column(Integer, primary_key=True, index=True)
     device_id = Column(Integer, ForeignKey("devices.id"), nullable=False, unique=True)
     obstacle_threshold = Column(Float, default=80.0)
+    water_threshold = Column(Integer, default=500)
     buzzer_enabled = Column(Boolean, default=True)
     vibration_enabled = Column(Boolean, default=True)
     emergency_contact_number = Column(String, default="")
