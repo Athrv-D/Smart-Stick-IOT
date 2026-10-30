@@ -1,126 +1,75 @@
 # Smart Stick IoT
 
-A single-device Smart Stick monitoring system for caregivers and personal use. The project is designed around a FastAPI backend, PostgreSQL-ready data storage, and a lightweight frontend dashboard for monitoring device health, sensor events, and emergency alerts.
+A caregiver monitoring application for **one physical Smart Stick** built around an ESP8266 controller.
 
-## Overview
+## What it does
 
-This project is intended for a single Smart Stick device, which is suitable for personal use and caregiver monitoring. The backend exposes HTTP endpoints that can be called by an ESP8266-powered device or by a Python simulator until hardware arrives.
+- Monitors one registered stick and its Wi-Fi heartbeat.
+- Displays battery level and recent ultrasonic distance readings.
+- Stores sensor events and emergency-button events.
+- Lets a caregiver review and resolve emergency records.
+- Stores obstacle threshold, buzzer, vibration, and notification settings.
+- Provides a Python simulator while the physical hardware is being assembled.
 
-## Architecture
+## Stack
 
-- Frontend: HTML, CSS, JavaScript
-- Backend: FastAPI
-- Database: PostgreSQL (ready for production), SQLite fallback for local testing
-- Device communication: HTTP-based API
-- Simulated device testing: Python script sends sensor data over HTTP
+- Backend: FastAPI + SQLAlchemy
+- Local database: SQLite
+- Frontend: HTML, CSS, vanilla JavaScript
+- Device communication: HTTP over Wi-Fi
+- Planned cellular fallback: SIM800L (SMS integration is not yet implemented)
 
-## Repository structure
+## Project layout
 
 ```text
-smart-stick/
-├── backend/
-│   ├── main.py
-│   ├── database.py
-│   ├── models/
-│   │   ├── device.py
-│   │   ├── sensor_event.py
-│   │   ├── emergency.py
-│   │   └── device_settings.py
-│   ├── schemas/
-│   │   ├── device.py
-│   │   ├── sensor.py
-│   │   └── emergency.py
-│   ├── routers/
-│   │   ├── devices.py
-│   │   ├── sensor_data.py
-│   │   ├── emergencies.py
-│   │   └── settings.py
-│   └── services/
-│       ├── device_service.py
-│       ├── sensor_service.py
-│       └── notification_service.py
-├── frontend/
-│   ├── index.html
-│   ├── devices.html
-│   ├── alerts.html
-│   ├── settings.html
-│   ├── css/
-│   │   └── style.css
-│   └── js/
-│       ├── dashboard.js
-│       ├── devices.js
-│       ├── alerts.js
-│       └── settings.js
-├── simulator/
-│   └── device_simulator.py
-├── .env.example
-├── docker-compose.yml
-├── requirements.txt
-├── .gitignore
-└── README.md
+backend/       FastAPI application, models, schemas, routers and services
+frontend/      Caregiver dashboard, stick status, alerts and settings
+simulator/     Python HTTP simulator for one stick
 ```
 
-## Features
+## Local setup (Windows PowerShell)
 
-- Device registration and status tracking
-- Sensor monitoring with simulated ultrasonic data
-- Emergency event storage and alert tracking
-- Dashboard for real-time device summary
-- Settings configuration for alert thresholds and notification preferences
-- Device simulator for testing without hardware
+1. Create and activate a virtual environment:
 
-## Local setup
-
-### 1) Create virtual environment
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-### 2) Install dependencies
+2. Install dependencies:
 
-```bash
+```powershell
 pip install -r requirements.txt
 ```
 
-### 3) Configure environment
+3. Create your local environment file from the example:
 
-Copy the example environment file:
-
-```bash
-cp .env.example .env
+```powershell
+Copy-Item .env.example .env
 ```
 
-### 4) Start PostgreSQL with Docker
+4. Start the API from the repository root:
 
-```bash
-docker compose up -d
-```
-
-### 5) Start the backend
-
-```bash
+```powershell
 uvicorn backend.main:app --reload
 ```
 
-Then open:
+5. Open the API documentation at http://127.0.0.1:8000/docs. Open `frontend/index.html` in a browser for the caregiver interface.
 
-- API docs: http://127.0.0.1:8000/docs
-- Dashboard: frontend/index.html in the browser
+## Simulator
 
-## Device simulator
+In a second terminal, activate the same virtual environment and run:
 
-Run the simulator to generate sensor events and emergency data:
-
-```bash
+```powershell
 python simulator/device_simulator.py
 ```
 
-The simulator posts HTTP payloads to the FastAPI backend in the same way an ESP8266 device would.
+The simulator registers or reuses `STICK_001`, uses the database ID returned by the API, and sends sensor readings and occasional emergency events.
 
-## Notes
+## Important implementation boundaries
 
-- This is designed primarily for one Smart Stick device, but the structure can be extended later for multiple devices.
-- Until GSM hardware is connected, SMS notification is simulated, not sent through a real SIM800L module.
-- The project uses PostgreSQL by default, but it can be run in SQLite mode for easier local testing if needed.
+- The app is intentionally configured for one stick. The database's internal device primary key remains in place to preserve foreign-key relationships.
+- Sensor POST requests update the stick's last-seen heartbeat. The dashboard considers the stick online when a heartbeat arrived within the last two minutes.
+- Notification delivery currently returns a simulated status. Real SMS delivery requires the SIM800L integration and a tested power supply.
+- Local buzzer and vibration alerts must ultimately be implemented on the ESP8266 so they continue working without Wi-Fi, backend, or GSM service.
+- SQLite is used by default for local development. Back up `smart_stick.db` before any future database migration.
