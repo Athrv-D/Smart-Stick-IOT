@@ -79,7 +79,21 @@ bool postJson(const String& path, JsonDocument& doc, String* responseBody = null
   String body;
   serializeJson(doc, body);
   int code = http.POST(body);
-  if (responseBody && code > 0) *responseBody = http.getString();
+  Serial.print("POST ");
+  Serial.print(path);
+  Serial.print(" | HTTP status: ");
+  Serial.println(code);
+
+  if (code > 0) {
+    String response = http.getString();
+    Serial.print("Response: ");
+    Serial.println(response);
+    if (responseBody) *responseBody = response;
+  } else {
+    Serial.print("HTTP error: ");
+    Serial.println(http.errorToString(code));
+  }
+
   http.end();
   return code >= 200 && code < 300;
 }
@@ -99,9 +113,21 @@ void fetchSettings() {
   HTTPClient http;
   if (!http.begin(wifiClient, String(API_BASE) + "/settings/")) return;
   int code = http.GET();
+  Serial.print("GET /settings/ | HTTP status: ");
+  Serial.println(code);
+  if (code > 0) {
+    Serial.print("Settings response: ");
+    Serial.println(http.getString());
+  } else {
+    Serial.print("Settings request error: ");
+    Serial.println(http.errorToString(code));
+  }
+
+  // Fetch the response again for JSON parsing.
   if (code == 200) {
+    String settingsResponse = http.getString();
     JsonDocument doc;
-    DeserializationError error = deserializeJson(doc, http.getString());
+    DeserializationError error = deserializeJson(doc, settingsResponse);
     if (!error) {
       obstacleThresholdCm = doc["obstacle_threshold"] | obstacleThresholdCm;
       waterThreshold = doc["water_threshold"] | waterThreshold;
@@ -212,6 +238,28 @@ void setup() {
 #endif
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  Serial.println();
+  Serial.println("Connecting to Wi-Fi...");
+  const unsigned long wifiStart = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 20000UL) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println();
+    Serial.println("Wi-Fi connected!");
+    Serial.print("ESP8266 IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Backend: ");
+    Serial.println(API_BASE);
+  } else {
+    Serial.println();
+    Serial.println("Wi-Fi connection failed. Local alerts remain active.");
+    Serial.print("Wi-Fi status code: ");
+    Serial.println(WiFi.status());
+  }
 }
 
 void loop() {
